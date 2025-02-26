@@ -1,8 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using TeamChat.Server.Application;
+using TeamChat.Server.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddDbContext<TeamChatDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TeamChatDb"));
+});
+
+//builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -18,6 +27,14 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapTeamEndpoints();
+
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    using var dbContext = scope.ServiceProvider.GetRequiredService<TeamChatDbContext>();
+    dbContext.Database.EnsureCreated();
+    dbContext.Database.Migrate();
+}
 
 app.Run();

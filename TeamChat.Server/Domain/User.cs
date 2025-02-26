@@ -26,14 +26,4 @@ public class User : BaseEntity
     {
         Password = password;
     }
-
-    public void AddTeam(Team team)
-    {
-        Teams.Add(team);
-    }
-
-    public void RemoveTeam(Team team)
-    {
-        Teams.Remove(team);
-    }
 }

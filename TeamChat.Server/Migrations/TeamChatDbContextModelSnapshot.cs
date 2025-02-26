@@ -94,12 +94,7 @@ namespace TeamChat.Server.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Team");
                 });
@@ -130,14 +125,24 @@ namespace TeamChat.Server.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TeamId");
-
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("TeamChat.Server.Domain.UserTeam", b =>
+                {
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TeamId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserTeam");
                 });
 
             modelBuilder.Entity("TeamChat.Server.Domain.Group", b =>
@@ -164,19 +169,23 @@ namespace TeamChat.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TeamChat.Server.Domain.Team", b =>
+            modelBuilder.Entity("TeamChat.Server.Domain.UserTeam", b =>
                 {
-                    b.HasOne("TeamChat.Server.Domain.User", null)
-                        .WithMany("Teams")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("TeamChat.Server.Domain.User", b =>
-                {
-                    b.HasOne("TeamChat.Server.Domain.Team", null)
-                        .WithMany("Users")
+                    b.HasOne("TeamChat.Server.Domain.Team", "Team")
+                        .WithMany()
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TeamChat.Server.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TeamChat.Server.Domain.Group", b =>
@@ -187,13 +196,6 @@ namespace TeamChat.Server.Migrations
             modelBuilder.Entity("TeamChat.Server.Domain.Team", b =>
                 {
                     b.Navigation("Groups");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("TeamChat.Server.Domain.User", b =>
-                {
-                    b.Navigation("Teams");
                 });
 #pragma warning restore 612, 618
         }

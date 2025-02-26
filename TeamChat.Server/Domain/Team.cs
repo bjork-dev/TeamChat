@@ -46,4 +46,20 @@ public class Team : BaseEntity, IAggregateRoot
 
         return Option<Error>.None;
     }
+
+    public void AddMessage(Message message, Group group)
+    {
+        var groupInTeam = Groups.FirstOrDefault(g => g.Id == group.Id);
+        if (groupInTeam is null)
+        {
+            throw new InvalidOperationException("Group does not belong to this team.");
+        }
+        var authorInTeam = Users.FirstOrDefault(u => u.Id == message.User.Id);
+        if (authorInTeam is null)
+        {
+            throw new InvalidOperationException("Author does not belong to this team.");
+        }
+        
+        groupInTeam.AddMessage(message);
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace TeamChat.Server.Domain;
+﻿using TeamChat.Server.Domain.Base;
+
+namespace TeamChat.Server.Domain;
 
 public class Message : BaseEntity
 {

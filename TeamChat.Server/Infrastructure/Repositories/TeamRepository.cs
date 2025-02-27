@@ -1,15 +1,18 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
+using TeamChat.Server.Application;
 using TeamChat.Server.Domain;
 
 namespace TeamChat.Server.Infrastructure.Repositories;
 
 public sealed class TeamRepository(TeamChatDbContext dbContext) : IGenericRepository<Team>
 {
-    public Task<Team[]> GetAllAsync()
+    public Task<Team[]> Get()
     {
-        throw new NotImplementedException();
+        return dbContext.Team
+            .AsNoTracking()
+            .ToArrayAsync();
     }
 
     public Task<Team?> GetByIdAsync(int id)
@@ -31,36 +34,29 @@ public sealed class TeamRepository(TeamChatDbContext dbContext) : IGenericReposi
         dbContext.Team.Update(entity);
     }
 
-    public async Task<Option<Unit>> Delete(int id)
+    public async Task<Option<Error>> Delete(int id)
     {
         var team = await dbContext.Team.FindAsync(id);
         
         if (team is null)
         {
-            return Option<Unit>.None;
+            return Error.New("Team not found");
         }
 
         dbContext.Team.Remove(team);
 
         await SaveChangesAsync();
 
-        return Unit.Default;
+        return Option<Error>.None;
     }
+
+    public Task<bool> Exists(string name)
+    {
+        return dbContext.Team.AnyAsync(x => x.Name == name);
+    }
+
     public Task SaveChangesAsync()
     {
         return dbContext.SaveChangesAsync();
     }
 }
-
-public interface IGenericRepository<in T> where T : IAggregateRoot
-{
-    Task<Team?> GetByIdAsync(int id);
-    void Add(T entity);
-    void Update(T entity);
-    Task<Option<Unit>> Delete(int id);
-    Task SaveChangesAsync();
-}
-/// <summary>
-/// Marker interface for aggregate root
-/// </summary>
-public interface IAggregateRoot;

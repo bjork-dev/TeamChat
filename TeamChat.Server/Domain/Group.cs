@@ -1,5 +1,6 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
+using TeamChat.Server.Domain.Base;
 
 namespace TeamChat.Server.Domain;
 

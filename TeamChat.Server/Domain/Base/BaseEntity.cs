@@ -1,6 +1,6 @@
 ﻿using TeamChat.Server.Domain.Events;
 
-namespace TeamChat.Server.Domain;
+namespace TeamChat.Server.Domain.Base;
 
 public abstract class BaseEntity
 {

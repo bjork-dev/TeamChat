@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamChat.Server.Infrastructure;
 
@@ -11,9 +12,11 @@ using TeamChat.Server.Infrastructure;
 namespace TeamChat.Server.Migrations
 {
     [DbContext(typeof(TeamChatDbContext))]
-    partial class TeamChatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250227194414_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,8 +125,8 @@ namespace TeamChat.Server.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");

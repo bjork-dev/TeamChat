@@ -1,7 +1,6 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
 using TeamChat.Server.Domain;
-using TeamChat.Server.Infrastructure.Repositories;
 
 namespace TeamChat.Server.Application;
 

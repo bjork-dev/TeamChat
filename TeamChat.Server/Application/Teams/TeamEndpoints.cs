@@ -1,13 +1,13 @@
 ﻿using LanguageExt;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TeamChat.Server.Application;
+namespace TeamChat.Server.Application.Teams;
 
 public static class TeamEndpoints
 {
     public static WebApplication MapTeamEndpoints(this WebApplication app)
     {
-        app.MapGet("/teams/{id:int:required}", async ([FromServices] ITeamService service, int id) =>
+        app.MapGet("/api/teams/team/{id:int:required}", async ([FromServices] ITeamService service, int id) =>
         {
             var teams = await service.GetAsync(id);
 
@@ -15,34 +15,50 @@ public static class TeamEndpoints
                 Right: Results.Ok,
                 Left: error => Results.NotFound(error.Message)
             );
-        }).WithName("GetTeams");
+        })
+            .RequireAuthorization("Authenticated")
+            .WithName("GetTeam");
 
-        app.MapPost("/teams", async ([FromServices] ITeamService service, TeamDto dto) =>
+        app.MapGet("/api/teams", async ([FromServices] ITeamService service) =>
+        {
+            var result = await service.GetAsync();
+            return Results.Ok(result);
+        })
+            .RequireAuthorization("Authenticated")
+            .WithName("GetTeams");
+
+        app.MapPost("/api/teams", async ([FromServices] ITeamService service, TeamDto dto) =>
         {
             var result = await service.CreateAsync(dto);
             return result.Match(
                 Right: team => Results.Created($"/teams/{team.Id}", team),
                 Left: error => Results.BadRequest(error.Message)
             );
-        }).WithName("CreateTeam");
+        })
+            .RequireAuthorization("Admin")
+            .WithName("CreateTeam");
 
-        app.MapPut("/teams", async ([FromServices] ITeamService service, TeamDto dto) =>
+        app.MapPut("/api/teams", async ([FromServices] ITeamService service, TeamDto dto) =>
         {
             var result = await service.UpdateAsync(dto);
             return result.Match(
                 Some: error => Results.NotFound(error.Message),
                 None: Results.NoContent
             );
-        }).WithName("UpdateTeam");
+        })
+            .RequireAuthorization("Admin")
+            .WithName("UpdateTeam");
 
-        app.MapDelete("/teams/{id:int:required}", async ([FromServices] ITeamService service, int id) =>
+        app.MapDelete("/api/teams/{id:int:required}", async ([FromServices] ITeamService service, int id) =>
         {
             var result = await service.DeleteAsync(id);
             return result.Match(
                 Some: error => Results.NotFound(error.Message),
                 None: Results.NoContent
             );
-        }).WithName("DeleteTeam");
+        })
+            .RequireAuthorization("Admin")
+            .WithName("DeleteTeam");
 
         return app;
     }

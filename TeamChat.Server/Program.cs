@@ -5,7 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using TeamChat.Server.Application;
 using TeamChat.Server.Application.Auth;
 using TeamChat.Server.Application.Auth.Interface;
+using TeamChat.Server.Application.Teams;
 using TeamChat.Server.Application.Users;
+using TeamChat.Server.Domain;
 using TeamChat.Server.Infrastructure;
 using TeamChat.Server.Infrastructure.Repositories;
 
@@ -29,8 +31,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<IGenericRepository<Team>, TeamRepository>();
 
-builder.Services.AddAuthorizationBuilder().AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Admin", policy => policy.RequireRole("Admin"))
+    .AddPolicy("Authenticated", policy => policy.RequireRole("Admin", "User"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -47,6 +53,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", p => p
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+    });
+}
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -60,6 +77,8 @@ app.MapTeamEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("AllowAll");
+
     app.MapOpenApi();
 
     using var scope = app.Services.CreateScope();

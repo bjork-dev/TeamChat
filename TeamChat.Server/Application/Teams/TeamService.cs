@@ -2,10 +2,16 @@
 using LanguageExt.Common;
 using TeamChat.Server.Domain;
 
-namespace TeamChat.Server.Application;
+namespace TeamChat.Server.Application.Teams;
 
 public class TeamService(IGenericRepository<Team> teamRepository) : ITeamService
 {
+    public async Task<TeamDto[]> GetAsync()
+    {
+        return (await teamRepository.Get())
+            .Map(team=> new TeamDto(team.Id, team.Name, team.Description))
+            .ToArray();
+    }
     public async Task<Either<Error, TeamDto>> GetAsync(int id)
     {
         var team = await teamRepository.GetByIdAsync(id);
@@ -57,13 +63,3 @@ public class TeamService(IGenericRepository<Team> teamRepository) : ITeamService
         );
     }
 }
-
-public interface ITeamService
-{
-    Task<Either<Error, TeamDto>> GetAsync(int id);
-    Task<Either<Error, TeamDto>> CreateAsync(TeamDto dto);
-    Task<Option<Error>> UpdateAsync(TeamDto dto);
-    Task<Option<Error>> DeleteAsync(int id);
-
-}
-public sealed record TeamDto(int Id, string Name, string Description);

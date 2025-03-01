@@ -10,6 +10,7 @@ namespace TeamChat.Server.Infrastructure.Repositories;
 public interface ITeamRepository : IGenericRepository<Team>
 {
     Task<Team[]> GetTeamsForUser(int userId);
+    Task<Group?> GetGroup(int id);
 }
 public sealed class TeamRepository(TeamChatDbContext dbContext) : ITeamRepository
 {
@@ -17,6 +18,7 @@ public sealed class TeamRepository(TeamChatDbContext dbContext) : ITeamRepositor
     {
         return dbContext.Team
             .AsNoTracking()
+            .Include(t => t.Groups)
             .ToArrayAsync();
     }
 
@@ -42,7 +44,7 @@ public sealed class TeamRepository(TeamChatDbContext dbContext) : ITeamRepositor
     public async Task<Option<Error>> Delete(int id)
     {
         var team = await dbContext.Team.FindAsync(id);
-        
+
         if (team is null)
         {
             return Error.New("Team not found");
@@ -68,10 +70,17 @@ public sealed class TeamRepository(TeamChatDbContext dbContext) : ITeamRepositor
     public async Task<Team[]> GetTeamsForUser(int userId)
     {
         var result = await dbContext.User
+            .AsNoTracking()
             .Include(x => x.Teams)
-            .Select(x=> new  {x.Id,  x.Teams })
+            .ThenInclude(x => x.Groups)
+            .Select(x => new { x.Id, x.Teams })
             .FirstOrDefaultAsync(x => x.Id == userId);
 
         return result == null ? [] : result.Teams.ToArray();
+    }
+
+    public Task<Group?> GetGroup(int id)
+    {
+        throw new NotImplementedException();
     }
 }

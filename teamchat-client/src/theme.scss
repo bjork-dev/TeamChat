@@ -1,4 +1,3 @@
-
 @use '@angular/material' as mat;
 
 .light-mode {
@@ -8,6 +7,7 @@
 .dark-mode {
   background: black;
 }
+
 body {
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
@@ -21,24 +21,26 @@ body {
 body.dark-mode {
   color-scheme: dark;
 
+  * {
+    color: #E2E3E0 !important;
+  }
+
+  mat-expansion-panel {
+    background: black;
+  }
+
   mat-toolbar {
     background: #151716;
   }
 
-  mat-icon {
-    color: #E2E3E0;
-  }
 
   .mdc-button {
-    color: #E2E3E0 !important;
     background: #323131 !important;
   }
 
-  color: #E2E3E0;
 
   mat-sidenav-container {
-    background:black;
-    color: white;
+    background: black;
   }
 
   mat-sidenav {
@@ -60,7 +62,10 @@ body.dark-mode {
 
 body.light-mode {
   color-scheme: light;
-  color: #1A1C1B;
+
+  * {
+    color: #1A1C1B !important;
+  }
 
   mat-toolbar {
     background: #f1f1f1;
@@ -73,7 +78,6 @@ body.light-mode {
 
     .mdc-button {
       background: #fa0000 !important;
-      color: #1A1C1B !important;
     }
 
   }
@@ -98,7 +102,6 @@ body.light-mode {
   }
 
   .mdc-button {
-    color: #1A1C1B !important;
     background: #d5d5d5 !important;
   }
 }

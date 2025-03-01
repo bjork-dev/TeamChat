@@ -1,23 +1,29 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
+using Microsoft.EntityFrameworkCore;
 using TeamChat.Server.Domain;
+using TeamChat.Server.Infrastructure;
 using TeamChat.Server.Infrastructure.Repositories;
 
 namespace TeamChat.Server.Application.Teams;
 
-public class TeamService(ITeamRepository teamRepository) : ITeamService
+public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbContext) : ITeamService
 {
     public async Task<TeamDto[]> GetAsync()
     {
         return (await teamRepository.Get())
-            .Map(team => new TeamDto(team.Id, team.Name, team.Description))
+            .Map(t => new TeamDto(t.Id, t.Name, t.Description, t.Groups
+                .Map(g => new GroupDto(g.Id, g.Name))
+                .ToArray()))
             .ToArray();
     }
 
     public async Task<TeamDto[]> GetUserTeams(int userId)
     {
         return (await teamRepository.GetTeamsForUser(userId))
-            .Map(team => new TeamDto(team.Id, team.Name, team.Description))
+            .Map(t => new TeamDto(t.Id, t.Name, t.Description, t.Groups
+                .Map(g => new GroupDto(g.Id, g.Name))
+                .ToArray()))
             .ToArray();
     }
 
@@ -28,7 +34,7 @@ public class TeamService(ITeamRepository teamRepository) : ITeamService
         {
             return Error.New("Team not found");
         }
-        return new TeamDto(team.Id, team.Name, team.Description);
+        return new TeamDto(team.Id, team.Name, team.Description, team.Groups.Map(g => new GroupDto(g.Id, g.Name)).ToArray());
     }
 
     public async Task<Either<Error, TeamDto>> CreateAsync(TeamDto dto)
@@ -70,5 +76,30 @@ public class TeamService(ITeamRepository teamRepository) : ITeamService
             Some: _ => Option<Error>.None,
             None: () => Option<Error>.Some(Error.New("Team not found"))
         );
+    }
+
+    public async Task<Either<Error, GroupDetailsDto>> GetGroupDetails(int id)
+    {
+        var group = await dbContext.Group
+            .AsNoTracking()
+            .Include(x => x.Messages)
+            .ThenInclude(x => x.User)
+            .Where(x=>x.Id == id)
+            .Select(x => new GroupDetailsDto(
+                x.Id,
+                x.Name,
+                x.Messages
+                    .Select(m => new MessageDto(m.Id, m.User.FirstName, m.User.LastName, m.Text, m.CreatedAt))
+                .ToArray())
+            {
+            })
+            .FirstOrDefaultAsync();
+
+        if (group == null)
+        {
+            return Error.New("Group does not exist");
+        }
+
+        return group;
     }
 }

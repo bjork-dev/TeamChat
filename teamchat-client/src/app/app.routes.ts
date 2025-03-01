@@ -7,10 +7,19 @@ export const routes: Routes = [
     loadComponent: () => import('./components/auth/login.component').then(m => m.LoginComponent)
   },
   {
-    path: 'home',
+    path: '',
     loadComponent: () => import('./components/home.component').then(m => m.HomeComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
+    children: [
+      {
+        path: 'group/:id',
+        loadComponent: () => import('./components/teams/group.component').then(m => m.GroupComponent),
+        canActivate: [authGuard]
+      },
+    ]
   },
+
   {
     path: '',
     redirectTo: '/home',

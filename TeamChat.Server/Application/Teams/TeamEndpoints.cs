@@ -69,6 +69,16 @@ public static class TeamEndpoints
             .RequireAuthorization("Admin")
             .WithName("DeleteTeam");
 
+        app.MapGet("/api/teams/group/{id:int:required}", async ([FromServices] ITeamService service, int id) =>
+            {
+                var result = await service.GetGroupDetails(id);
+                return result.Match(
+                    Right: Results.Ok,
+                    Left: error => Results.NotFound(error.Message));
+            })
+        .RequireAuthorization("Authenticated")
+        .WithName("GetGroupDetails");
+
         return app;
     }
 }

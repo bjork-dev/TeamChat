@@ -12,4 +12,5 @@ public interface ITeamService
     Task<Option<Error>> UpdateAsync(TeamDto dto);
     Task<Option<Error>> DeleteAsync(int id);
 
+    Task<Either<Error, GroupDetailsDto>> GetGroupDetails(int id);
 }

@@ -24,8 +24,6 @@ builder.Services.AddDbContext<TeamChatDbContext>(options =>
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -53,12 +51,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization();
+
+
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", p => p
-            .AllowAnyOrigin()
+            .WithOrigins("http://localhost:4200")
+            .AllowCredentials()
             .AllowAnyMethod()
             .AllowAnyHeader());
     });
@@ -66,19 +68,8 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
-
-app.UseAuthorization();
-
-app.MapAuthEndpoints();
-app.MapUserEndpoints();
-app.MapTeamEndpoints();
-
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("AllowAll");
-
     app.MapOpenApi();
 
     using var scope = app.Services.CreateScope();
@@ -87,6 +78,18 @@ if (app.Environment.IsDevelopment())
     dbContext.Database.Migrate();
 
     dbContext.Seed();
+
+    app.UseCors("AllowAll");
 }
+
+
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapAuthEndpoints();
+app.MapUserEndpoints();
+app.MapTeamEndpoints();
 
 app.Run();

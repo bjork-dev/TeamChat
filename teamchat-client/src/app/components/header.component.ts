@@ -27,6 +27,7 @@ import {ThemePickerComponent} from './theme-picker/theme-picker.component';
         <button mat-icon-button (click)="toggleSidenav.emit()">
           <mat-icon>menu</mat-icon>
         </button>
+        <h1>TeamChat</h1>
         <span class="spacer"></span>
         <app-theme-picker/>
         <app-user/>

@@ -5,14 +5,18 @@ import {User} from '../../domain/users/user';
 import {Observable, of, switchMap, tap} from 'rxjs';
 import {LoginToken} from '../../domain/auth/login-token';
 
-@Injectable()
+@Injectable(
+  {providedIn: 'root'}
+)
 export class AuthService {
 
-  http = inject(HttpClient);
-  jwtHelper = inject(JwtHelperService);
+  private http = inject(HttpClient);
+  private jwtHelper = inject(JwtHelperService);
 
-  _user = signal<User | undefined>(undefined);
-  user = this._user.asReadonly();
+  private _user = signal<User | undefined>(undefined);
+  public user = this._user.asReadonly();
+
+  private authToken = signal<string | undefined>(undefined)
 
   constructor() {
     const tokenJson = localStorage.getItem('token');
@@ -20,12 +24,12 @@ export class AuthService {
     const loginToken = JSON.parse(tokenJson) as LoginToken;
     if (!loginToken) return
     const user = this.decodeToken(loginToken.token)
-    console.log(user);
     if (!user) return;
     this._user.set(user);
   }
 
   decodeToken(token: string): User | null {
+    this.authToken.set(token);
     const decodedToken = this.jwtHelper.decodeToken(token);
 
     const id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] as number
@@ -53,7 +57,6 @@ export class AuthService {
         switchMap((loginToken: LoginToken) => {
           localStorage.setItem('token', JSON.stringify(loginToken));
           const user = this.decodeToken(loginToken.token);
-          console.log(user);
           if (!user) {
             throw new Error('Invalid token');
           }
@@ -63,4 +66,12 @@ export class AuthService {
       );
   }
 
+  logout() {
+    this._user.set(undefined);
+    localStorage.removeItem('token');
+  }
+
+  getAuthToken() {
+    return this.authToken()
+  }
 }

@@ -1,0 +1,104 @@
+
+@use '@angular/material' as mat;
+
+.light-mode {
+  background: inherit;
+}
+
+.dark-mode {
+  background: black;
+}
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+.mdc-button {
+  border-radius: 2px !important;
+}
+
+
+body.dark-mode {
+  color-scheme: dark;
+
+  mat-toolbar {
+    background: #151716;
+  }
+
+  mat-icon {
+    color: #E2E3E0;
+  }
+
+  .mdc-button {
+    color: #E2E3E0 !important;
+    background: #323131 !important;
+  }
+
+  color: #E2E3E0;
+
+  mat-sidenav-container {
+    background:black;
+    color: white;
+  }
+
+  mat-sidenav {
+    background: #1A1C1B;
+
+    .mdc-button {
+      background: #1A1C1B !important;
+    }
+
+    .mat-tree-node {
+      background: #1A1C1B !important;
+    }
+
+    .tree {
+      background: #1A1C1B !important;
+    }
+  }
+}
+
+body.light-mode {
+  color-scheme: light;
+  color: #1A1C1B;
+
+  mat-toolbar {
+    background: #f1f1f1;
+  }
+
+  .active {
+    .mat-tree-node {
+      background: #ff0707;
+    }
+
+    .mdc-button {
+      background: #fa0000 !important;
+      color: #1A1C1B !important;
+    }
+
+  }
+
+  mat-sidenav {
+    background: #efefef;
+
+    .mdc-button {
+      background: #efefef !important;
+      color: #1A1C1B !important;
+    }
+
+    .mat-tree-node {
+      background: #efefef !important;
+    }
+
+    .tree {
+      background: #efefef !important;
+    }
+
+
+  }
+
+  .mdc-button {
+    color: #1A1C1B !important;
+    background: #d5d5d5 !important;
+  }
+}

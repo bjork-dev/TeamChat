@@ -7,6 +7,7 @@ public interface ITeamService
 {
     Task<Either<Error, TeamDto>> GetAsync(int id);
     Task<TeamDto[]> GetAsync();
+    Task<TeamDto[]> GetUserTeams(int userId);
     Task<Either<Error, TeamDto>> CreateAsync(TeamDto dto);
     Task<Option<Error>> UpdateAsync(TeamDto dto);
     Task<Option<Error>> DeleteAsync(int id);

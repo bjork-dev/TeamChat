@@ -2,11 +2,16 @@
 using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
 using TeamChat.Server.Application;
+using TeamChat.Server.Application.Teams;
 using TeamChat.Server.Domain;
 
 namespace TeamChat.Server.Infrastructure.Repositories;
 
-public sealed class TeamRepository(TeamChatDbContext dbContext) : IGenericRepository<Team>
+public interface ITeamRepository : IGenericRepository<Team>
+{
+    Task<Team[]> GetTeamsForUser(int userId);
+}
+public sealed class TeamRepository(TeamChatDbContext dbContext) : ITeamRepository
 {
     public Task<Team[]> Get()
     {
@@ -58,5 +63,15 @@ public sealed class TeamRepository(TeamChatDbContext dbContext) : IGenericReposi
     public Task SaveChangesAsync()
     {
         return dbContext.SaveChangesAsync();
+    }
+
+    public async Task<Team[]> GetTeamsForUser(int userId)
+    {
+        var result = await dbContext.User
+            .Include(x => x.Teams)
+            .Select(x=> new  {x.Id,  x.Teams })
+            .FirstOrDefaultAsync(x => x.Id == userId);
+
+        return result == null ? [] : result.Teams.ToArray();
     }
 }

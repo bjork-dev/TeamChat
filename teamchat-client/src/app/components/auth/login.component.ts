@@ -4,11 +4,12 @@ import {MatFormField} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {AuthService} from './auth.service';
-import {catchError, firstValueFrom} from 'rxjs';
+import {catchError, firstValueFrom, tap} from 'rxjs';
 import {Notyf} from 'notyf';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -65,8 +66,8 @@ export class LoginComponent {
   loginService = inject(AuthService);
   notyf = inject(Notyf);
   formBuilder = inject(FormBuilder);
-
-  loading =signal(false);
+  router = inject(Router);
+  loading = signal(false);
 
   loginForm = this.formBuilder.group({
     username: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
@@ -82,7 +83,10 @@ export class LoginComponent {
           this.loading.set(false);
           throw error;
         }
-      )
-    ));
+      ),
+      tap(() =>
+        this.router.navigateByUrl('/')
+      ))
+    );
   }
 }

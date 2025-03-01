@@ -32,7 +32,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<IGenericRepository<Team>, TeamRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"))

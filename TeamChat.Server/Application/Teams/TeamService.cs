@@ -1,17 +1,26 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
 using TeamChat.Server.Domain;
+using TeamChat.Server.Infrastructure.Repositories;
 
 namespace TeamChat.Server.Application.Teams;
 
-public class TeamService(IGenericRepository<Team> teamRepository) : ITeamService
+public class TeamService(ITeamRepository teamRepository) : ITeamService
 {
     public async Task<TeamDto[]> GetAsync()
     {
         return (await teamRepository.Get())
-            .Map(team=> new TeamDto(team.Id, team.Name, team.Description))
+            .Map(team => new TeamDto(team.Id, team.Name, team.Description))
             .ToArray();
     }
+
+    public async Task<TeamDto[]> GetUserTeams(int userId)
+    {
+        return (await teamRepository.GetTeamsForUser(userId))
+            .Map(team => new TeamDto(team.Id, team.Name, team.Description))
+            .ToArray();
+    }
+
     public async Task<Either<Error, TeamDto>> GetAsync(int id)
     {
         var team = await teamRepository.GetByIdAsync(id);

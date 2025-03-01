@@ -27,6 +27,15 @@ public static class TeamEndpoints
             .RequireAuthorization("Authenticated")
             .WithName("GetTeams");
 
+
+        app.MapGet("/api/teams/user/{userId:int:required}", async ([FromServices] ITeamService service, int userId) =>
+            {
+                var result = await service.GetUserTeams(userId);
+                return Results.Ok(result);
+            })
+            .RequireAuthorization("Authenticated")
+            .WithName("GetTeamsForUser");
+
         app.MapPost("/api/teams", async ([FromServices] ITeamService service, TeamDto dto) =>
         {
             var result = await service.CreateAsync(dto);

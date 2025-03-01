@@ -3,7 +3,7 @@ import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} fr
 import {MatFormField} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
-import {LoginService} from './login.service';
+import {AuthService} from './auth.service';
 import {catchError, firstValueFrom} from 'rxjs';
 import {Notyf} from 'notyf';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -11,8 +11,8 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'app-login',
-  providers: [LoginService],
+  selector: 'app-auth',
+  providers: [AuthService],
   styles: [],
   template: `
     <div class="container h-100 d-flex align-items-center justify-content-center ">
@@ -62,7 +62,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 })
 export class LoginComponent {
 
-  loginService = inject(LoginService);
+  loginService = inject(AuthService);
   notyf = inject(Notyf);
   formBuilder = inject(FormBuilder);
 

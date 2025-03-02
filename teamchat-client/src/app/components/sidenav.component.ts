@@ -20,7 +20,7 @@ import {TeamsComponent} from './teams/teams.component';
     }
 
     mat-sidenav-container {
-      height: calc(100vh - 120px);
+      height: calc(100vh - 64px);
     }
     `
   ],

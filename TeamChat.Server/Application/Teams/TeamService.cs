@@ -84,12 +84,12 @@ public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbCon
             .AsNoTracking()
             .Include(x => x.Messages)
             .ThenInclude(x => x.User)
-            .Where(x=>x.Id == id)
+            .Where(x => x.Id == id)
             .Select(x => new GroupDetailsDto(
                 x.Id,
                 x.Name,
                 x.Messages
-                    .Select(m => new MessageDto(m.Id, m.User.FirstName, m.User.LastName, m.Text, m.CreatedAt))
+                    .Select(m => new MessageDto(m.Id, m.User.Id, m.User.FirstName, m.User.LastName, m.Text, m.CreatedAt))
                 .ToArray())
             {
             })
@@ -101,5 +101,26 @@ public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbCon
         }
 
         return group;
+    }
+
+    public async Task<Option<Error>> AddMessageToGroup(int groupId, int userId, string text)
+    {
+        var group = await dbContext.Group.FirstOrDefaultAsync(x => x.Id == groupId);
+
+        if (group == null)
+        {
+            return Error.New("Group does not exist");
+        }
+
+        var user = await dbContext.User.FirstOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null)
+        {
+            return Error.New("User does not exist");
+        }
+
+        group.AddMessage(new Message(user, text));
+        await dbContext.SaveChangesAsync();
+        return Option<Error>.None;
     }
 }

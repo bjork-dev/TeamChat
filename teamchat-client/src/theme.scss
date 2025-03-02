@@ -14,15 +14,28 @@ body {
 }
 
 .mdc-button {
-  border-radius: 2px !important;
+  border-radius: 12px !important;
 }
 
+mat-sidenav {
+  border-radius: 0 !important;
+}
 
 body.dark-mode {
   color-scheme: dark;
 
   * {
     color: #E2E3E0 !important;
+  }
+
+  input {
+    color: #E2E3E0 !important;
+  }
+
+  .mdc-text-field
+  {
+    color:white !important;
+    background: #1A1C1B !important;
   }
 
   mat-expansion-panel {
@@ -43,20 +56,12 @@ body.dark-mode {
     background: black;
   }
 
+  mat-card {
+    background: #1A1C1B;
+  }
+
   mat-sidenav {
     background: #1A1C1B;
-
-    .mdc-button {
-      background: #1A1C1B !important;
-    }
-
-    .mat-tree-node {
-      background: #1A1C1B !important;
-    }
-
-    .tree {
-      background: #1A1C1B !important;
-    }
   }
 }
 
@@ -72,10 +77,6 @@ body.light-mode {
   }
 
   .active {
-    .mat-tree-node {
-      background: #ff0707;
-    }
-
     .mdc-button {
       background: #fa0000 !important;
     }
@@ -86,8 +87,7 @@ body.light-mode {
     background: #efefef;
 
     .mdc-button {
-      background: #efefef !important;
-      color: #1A1C1B !important;
+      //background: #efefef !important;
     }
 
     .mat-tree-node {
@@ -102,6 +102,6 @@ body.light-mode {
   }
 
   .mdc-button {
-    background: #d5d5d5 !important;
+    background: #D5D5D5 !important;
   }
 }

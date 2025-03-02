@@ -1,5 +1,6 @@
 ﻿using LanguageExt;
 using Microsoft.AspNetCore.Mvc;
+using TeamChat.Server.Infrastructure;
 
 namespace TeamChat.Server.Application.Teams;
 
@@ -79,6 +80,29 @@ public static class TeamEndpoints
         .RequireAuthorization("Authenticated")
         .WithName("GetGroupDetails");
 
+        app.MapPost("/api/teams/group/{groupId:int:required}/message", async ([FromServices] ITeamService service,
+                HttpContext ctx,
+                int groupId,
+                [FromBody] SendMessageDto message) =>
+            {
+                var nameIdentifier = ctx.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                if (int.TryParse(nameIdentifier, out var userId) == false)
+                {
+                    return Results.BadRequest("Missing userId");
+                }
+
+                var result = await service.AddMessageToGroup(groupId, userId, message.Content);
+
+                return result.Match(
+                    Some: error => Results.BadRequest(error.Message),
+                    None: Results.Ok()
+                );
+            })
+            .RequireAuthorization("Authenticated")
+            .WithName("SendMessageToGroup");
+
         return app;
     }
 }
+
+internal sealed record SendMessageDto(string Content);

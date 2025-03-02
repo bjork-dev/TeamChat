@@ -34,8 +34,6 @@ import {RouterLink} from '@angular/router';
             <mat-expansion-panel class="mat-elevation-z0">
               <mat-expansion-panel-header>
                 <mat-panel-title> {{ team.name }}</mat-panel-title>
-                <mat-panel-description>
-                </mat-panel-description>
               </mat-expansion-panel-header>
               <small>{{ team.description }}</small>
               <mat-divider/>

@@ -19,4 +19,8 @@ export class TeamService {
   getGroupDetails(groupId: number) {
     return this.http.get<Group>(`/api/teams/group/${groupId}`);
   }
+
+  sendMessage(groupId: number, content: string) {
+    return this.http.post(`/api/teams/group/${groupId}/message`, {content});
+  }
 }

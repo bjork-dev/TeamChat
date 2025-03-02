@@ -1,5 +1,6 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
+using TeamChat.Server.Application;
 using TeamChat.Server.Domain.Base;
 
 namespace TeamChat.Server.Domain;
@@ -18,5 +19,7 @@ public class Group : BaseEntity
     public void AddMessage(Message message)
     {
         Messages.Add(message);
+
+        AddDomainEvent(new MessageSentToGroup(Id));
     }
 }

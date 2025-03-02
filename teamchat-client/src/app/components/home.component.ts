@@ -1,7 +1,6 @@
 import {Component, signal} from '@angular/core';
 import {HeaderComponent} from './header.component';
 import {SidenavComponent} from './sidenav.component';
-import {FooterComponent} from './footer.component';
 import {RouterOutlet} from '@angular/router';
 
 @Component(
@@ -10,23 +9,15 @@ import {RouterOutlet} from '@angular/router';
     imports: [
       HeaderComponent,
       SidenavComponent,
-      FooterComponent,
       RouterOutlet
     ],
-    styles: [
-      `
-        .content {
-
-        }
-      `
-    ],
     template: `
-      <div class="content">
+      <div>
         <app-header (toggleSidenav)="toggle()"/>
         <app-sidenav [toggleDrawer]="toggleSidenav()">
           <router-outlet></router-outlet>
         </app-sidenav>
-        <app-footer class="d-flex justify-content-center"/>
+<!--        <app-footer class="d-flex justify-content-center"/>-->
       </div>
     `
   }

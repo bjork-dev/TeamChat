@@ -64,11 +64,11 @@
           "configurations": {
             "production": {
               "buildTarget": "teamchat-client:build:production",
-              "proxyConfig": "proxy.conf.json"
+              "proxyConfig": "proxy.conf.mjs"
             },
             "development": {
               "buildTarget": "teamchat-client:build:development",
-              "proxyConfig": "proxy.conf.dev.json"
+              "proxyConfig": "proxy.conf.dev.mjs"
             }
           },
           "defaultConfiguration": "development"

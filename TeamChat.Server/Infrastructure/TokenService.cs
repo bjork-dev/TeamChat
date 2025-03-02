@@ -17,10 +17,10 @@ public sealed class TokenService(IConfiguration configuration) : ITokenService
         var signinCredentials = new SigningCredentials(_secretKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: configuration["Jwt:Issuer"],
-            audience: configuration["Jwt:Audience"],
+            issuer: "TeamChatServer",
+            audience: "TeamChatClient",
             claims: claims,
-            expires: DateTime.Now.AddHours(8),
+            expires: DateTime.Now.AddHours(1),
             signingCredentials: signinCredentials
         );
 

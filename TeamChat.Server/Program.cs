@@ -102,8 +102,9 @@ if (app.Environment.IsDevelopment())
     app.UseCors("AllowAll");
 }
 
-
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -117,7 +118,6 @@ app.MapHub<TeamChatHub>("/hub");
 if (app.Environment.IsProduction())
 {
     app.UseSpaStaticFiles();
-    app.UseRouting();
     app.UseSpa(s => s.Options.SourcePath = "wwwroot");
 }
 

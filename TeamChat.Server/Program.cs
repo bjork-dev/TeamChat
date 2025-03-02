@@ -69,7 +69,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
@@ -80,6 +79,11 @@ if (builder.Environment.IsDevelopment())
             .AllowAnyMethod()
             .AllowAnyHeader());
     });
+}
+
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddSpaStaticFiles(c => c.RootPath = "wwwroot");
 }
 
 var app = builder.Build();
@@ -109,5 +113,12 @@ app.MapUserEndpoints();
 app.MapTeamEndpoints();
 
 app.MapHub<TeamChatHub>("/hub");
+
+if (app.Environment.IsProduction())
+{
+    app.UseSpaStaticFiles();
+    app.UseRouting();
+    app.UseSpa(s => s.Options.SourcePath = "wwwroot");
+}
 
 app.Run();

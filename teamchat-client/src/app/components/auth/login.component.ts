@@ -78,15 +78,16 @@ export class LoginComponent {
     this.loading.set(true);
     const {username, password} = this.loginForm.value;
     await firstValueFrom(this.loginService.login(username!, password!).pipe(
-      catchError((error: HttpErrorResponse) => {
-          this.notyf.error(error.error);
-          this.loading.set(false);
-          throw error;
-        }
-      ),
-      tap(() =>
-        this.router.navigateByUrl('/')
-      ))
+        tap(async () =>
+          await this.router.navigateByUrl('/')
+        ),
+        catchError((error: HttpErrorResponse) => {
+            this.notyf.error(error.error);
+            this.loading.set(false);
+            throw error;
+          }
+        )
+      )
     );
   }
 }

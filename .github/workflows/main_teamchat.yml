@@ -35,7 +35,7 @@ jobs:
       # Step 4: Copy Angular build output to .NET app's wwwroot
       - name: Copy Angular build to .NET wwwroot
         run: |
-          rm -rf ./TeamChat.Server/wwwroot/*  # Remove old files
+          mkdir ./TeamChat.Server/wwwroot  # Create directory
           cp -r ./teamchat-client/dist/teamchat-client/browser/* ./TeamChat.Server/wwwroot/
         shell: bash
 

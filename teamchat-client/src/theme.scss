@@ -13,6 +13,10 @@ body {
   color: var(--mat-sys-on-surface);
 }
 
+.mat-mdc-menu-panel {
+  background: #151716 !important;
+}
+
 .mdc-button {
   border-radius: 12px !important;
 }
@@ -71,6 +75,11 @@ body.light-mode {
   * {
     color: #1A1C1B !important;
   }
+
+  .mat-mdc-menu-panel {
+    background: #f1f1f1 !important;
+  }
+
 
   mat-toolbar {
     background: #f1f1f1;

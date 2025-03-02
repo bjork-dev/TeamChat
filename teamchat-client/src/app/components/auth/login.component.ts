@@ -16,8 +16,8 @@ import {Router} from '@angular/router';
   providers: [AuthService],
   styles: [],
   template: `
-    <div class="container h-100 d-flex align-items-center justify-content-center ">
-      <mat-card class="w-50">
+    <div class="container-fluid h-100 d-flex align-items-center justify-content-center ">
+      <mat-card class="w-100" style="max-width: 400px;">
         <mat-card-header>
           <mat-card-title>Login TeamChat</mat-card-title>
         </mat-card-header>

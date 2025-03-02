@@ -36,8 +36,7 @@ jobs:
       - name: Copy Angular build to .NET wwwroot
         run: |
           rm -rf ./TeamChat.Server/wwwroot/*  # Remove old files
-          ls ./teamchat-client
-          cp -r ./teamchat-client/dist/teamchar-client/browser/* ./TeamChat.Server/wwwroot/
+          cp -r ./teamchat-client/dist/teamchat-client/browser/* ./TeamChat.Server/wwwroot/
         shell: bash
 
       # Step 5: Set up .NET Core

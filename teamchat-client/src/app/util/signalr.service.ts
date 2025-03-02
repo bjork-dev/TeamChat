@@ -30,7 +30,7 @@ export class SignalrService implements OnDestroy {
 
     this._connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
-      .withUrl(environment + '/hub', {accessTokenFactory: () => token})
+      .withUrl(environment.server + '/hub', {accessTokenFactory: () => token})
       .build();
 
     this._connection.start()

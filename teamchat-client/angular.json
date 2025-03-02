@@ -64,7 +64,8 @@
           "configurations": {
             "production": {
               "buildTarget": "teamchat-client:build:production",
-              "proxyConfig": "proxy.conf.mjs"
+              "proxyConfig": "proxy.conf.mjs",
+              "fileReplacements": ["environment.ts", "environment.prod.ts"]
             },
             "development": {
               "buildTarget": "teamchat-client:build:development",

@@ -21,7 +21,6 @@ import {RouterLink} from '@angular/router';
       MatAccordion,
       MatExpansionPanel,
       MatExpansionPanelTitle,
-      MatExpansionPanelDescription,
       MatDivider,
       MatAnchor,
       RouterLink

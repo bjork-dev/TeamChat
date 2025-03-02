@@ -13,7 +13,6 @@ import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-auth',
-  providers: [AuthService],
   styles: [],
   template: `
     <div class="container-fluid h-100 d-flex align-items-center justify-content-center ">

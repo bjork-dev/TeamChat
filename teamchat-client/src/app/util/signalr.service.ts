@@ -4,6 +4,7 @@ import {HubConnection, HubConnectionState} from '@microsoft/signalr';
 import {Notyf} from 'notyf';
 import {filter, Subject} from 'rxjs';
 import {AuthService} from '../components/auth/auth.service';
+import {environment} from '../../../environment';
 
 @Injectable(
   {providedIn: 'root'}
@@ -29,7 +30,7 @@ export class SignalrService implements OnDestroy {
 
     this._connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
-      .withUrl(`https://localhost:7248/hub`, {accessTokenFactory: () => token})
+      .withUrl(environment + '/hub', {accessTokenFactory: () => token})
       .build();
 
     this._connection.start()

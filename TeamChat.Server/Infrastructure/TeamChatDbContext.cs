@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using TeamChat.Server.Domain;
 using TeamChat.Server.Domain.Base;
 
@@ -11,7 +11,6 @@ public sealed class TeamChatDbContext(DbContextOptions<TeamChatDbContext> option
     public DbSet<Team> Team => Set<Team>();
     public DbSet<Group> Group => Set<Group>();
     public DbSet<User> User => Set<User>();
-    public DbSet<Message> Message => Set<Message>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,7 +19,7 @@ public sealed class TeamChatDbContext(DbContextOptions<TeamChatDbContext> option
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
-        var result =await base.SaveChangesAsync(cancellationToken);
+        var result = await base.SaveChangesAsync(cancellationToken);
         await DispatchDomainEvents();
         return result;
     }

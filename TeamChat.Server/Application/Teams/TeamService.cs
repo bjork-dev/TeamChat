@@ -26,11 +26,7 @@ public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbCon
             return cachedTeams;
         }
 
-        var teams = (await teamRepository.GetTeamsForUser(userId))
-            .Map(t => new TeamDto(t.Id, t.Name, t.Description, t.Groups
-                .Map(g => new GroupDto(g.Id, g.Name))
-                .ToArray()))
-            .ToArray();
+        var teams = await dbContext.GetTeamsForUser(userId);
 
         cache.Set($"{userId}-teams", teams, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
 
@@ -90,20 +86,7 @@ public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbCon
 
     public async Task<Either<Error, GroupDetailsDto>> GetGroupDetails(int id)
     {
-        var group = await dbContext.Group
-            .AsNoTracking()
-            .Include(x => x.Messages)
-            .ThenInclude(x => x.User)
-            .Where(x => x.Id == id)
-            .Select(x => new GroupDetailsDto(
-                x.Id,
-                x.Name,
-                x.Messages
-                    .Select(m => new MessageDto(m.Id, m.User.Id, m.User.FirstName, m.User.LastName, m.Text, m.CreatedAt))
-                .ToArray())
-            {
-            })
-            .FirstOrDefaultAsync();
+        var group = await dbContext.GetGroup(id);
 
         if (group == null)
         {

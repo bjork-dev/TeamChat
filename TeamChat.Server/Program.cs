@@ -1,5 +1,7 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TeamChat.Server.Application;
@@ -43,6 +45,26 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"))
     .AddPolicy("Authenticated", policy => policy.RequireRole("Admin", "User"));
 
+builder.Services.AddRateLimiter(options =>
+{
+    // Stop the spam! Limit requests to 10 per second on all endpoints
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetTokenBucketLimiter(
+            // Use IP address as a unique key for each client
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? throw new NullReferenceException("Missing RemoteIpAddress"),
+            _ => new TokenBucketRateLimiterOptions
+            {
+                TokenLimit = 10, // Maximum tokens a client can accumulate
+                ReplenishmentPeriod = TimeSpan.FromSeconds(5), // Replenishment interval
+                TokensPerPeriod = 2, // Number of tokens added per interval
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 2 // Allow 2 extra requests to be queued
+            }));
+
+    // Set a fallback policy for requests without a defined limiter
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -79,6 +101,8 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
     {
+        // Enable CORS in development environment to allow requests from Angular dev server
+        // Not needed in production as Angular app is served from the same server
         options.AddPolicy("AllowAll", p => p
             .WithOrigins("http://localhost:4200")
             .AllowCredentials()
@@ -107,6 +131,8 @@ if (app.Environment.IsDevelopment())
 
     app.UseCors("AllowAll");
 }
+
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 

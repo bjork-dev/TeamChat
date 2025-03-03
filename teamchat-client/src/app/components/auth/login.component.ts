@@ -10,15 +10,33 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {Router} from '@angular/router';
+import {HeaderComponent} from '../header.component';
 
 @Component({
-  selector: 'app-auth',
-  styles: [],
+  imports: [
+    MatCard,
+    MatFormField,
+    MatCardContent,
+    MatCardTitle,
+    MatInput,
+    MatButton,
+    MatCardActions,
+    MatCardHeader,
+    ReactiveFormsModule,
+    MatProgressSpinner,
+    HeaderComponent
+  ],
+  styles: [`
+    .login {
+      height: calc(100vh - 64px);
+    }
+  `],
   template: `
-    <div class="container-fluid h-100 d-flex align-items-center justify-content-center ">
+    <app-header/>
+    <div class="container-fluid d-flex align-items-center justify-content-center login">
       <mat-card class="w-100" style="max-width: 400px;">
         <mat-card-header>
-          <mat-card-title>Login TeamChat</mat-card-title>
+          <mat-card-title>TeamChat Login</mat-card-title>
         </mat-card-header>
         <form [formGroup]="loginForm" (ngSubmit)="login()">
           <mat-card-content>
@@ -47,18 +65,6 @@ import {Router} from '@angular/router';
       </mat-card>
     </div>
   `,
-  imports: [
-    MatCard,
-    MatFormField,
-    MatCardContent,
-    MatCardTitle,
-    MatInput,
-    MatButton,
-    MatCardActions,
-    MatCardHeader,
-    ReactiveFormsModule,
-    MatProgressSpinner
-  ]
 })
 export class LoginComponent {
 

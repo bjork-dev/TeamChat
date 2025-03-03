@@ -1,6 +1,4 @@
-﻿using LanguageExt;
-using LanguageExt.Common;
-using TeamChat.Server.Application;
+﻿using TeamChat.Server.Application.Teams.EventHandlers;
 using TeamChat.Server.Domain.Base;
 
 namespace TeamChat.Server.Domain;

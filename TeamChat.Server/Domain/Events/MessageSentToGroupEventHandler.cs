@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using TeamChat.Server.Domain.Events;
+using TeamChat.Server.Application;
+using TeamChat.Server.Application.Teams.EventHandlers;
 
-namespace TeamChat.Server.Application;
-
-public sealed record MessageSentToGroup(int GroupId) : IDomainEvent;
+namespace TeamChat.Server.Domain.Events;
 
 internal sealed class MessageSentToGroupEventHandler(IHubContext<TeamChatHub> hubContext) : INotificationHandler<MessageSentToGroup>
 {

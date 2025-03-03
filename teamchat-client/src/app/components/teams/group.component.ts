@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  inject,
+  inject, OnDestroy,
   signal,
   viewChild
 } from '@angular/core';
@@ -20,6 +20,7 @@ import {MatDivider} from '@angular/material/divider';
 import {Notyf} from 'notyf';
 import {Message} from '../../domain/teams/message';
 import {MatButton} from '@angular/material/button';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-group',
@@ -68,12 +69,13 @@ import {MatButton} from '@angular/material/button';
     }
   `
 })
-export class GroupComponent {
+export class GroupComponent implements OnDestroy {
   route = inject(ActivatedRoute);
   teamService = inject(TeamService);
   userId = inject(AuthService).user()?.id;
   signalRService = inject(SignalrService);
   notyf = inject(Notyf);
+  titleService = inject(Title);
 
   messageReceived = new Subject<void>();
 
@@ -83,14 +85,15 @@ export class GroupComponent {
   scrollContainer = viewChild<ElementRef>('scrollContainer');
 
   constructor() {
+    console.log('GroupComponent created');
     this.signalRService.addListener('messageReceived', () => {
         this.messageReceived.next();
       }
     );
   }
 
-  group = this.signalRService.hubConnectionState.pipe(
-    switchMap(() => this.route.params.pipe(
+  group =
+    this.route.params.pipe(
       map(params => params['id']),
       tap(id => {
         this.groupId.set(id)
@@ -103,12 +106,12 @@ export class GroupComponent {
           map(() => id)))
       ),
       switchMap(id => this.teamService.getGroupDetails(id)),
-      tap(() => {
+      tap((group) => {
+        this.titleService.setTitle(group.name);
         this.scrollToBottom()
         this.firstRender.set(false)
       })
-    ))
-  );
+    );
 
   scrollToBottom(viaButton = false) {
     // Ensure the container exists
@@ -129,5 +132,11 @@ export class GroupComponent {
         throw err;
       }),
     ));
+  }
+
+  ngOnDestroy() {
+    console.log('GroupComponent destroyed');
+
+    this.signalRService.leaveGroup(this.groupId());
   }
 }

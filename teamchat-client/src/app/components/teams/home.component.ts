@@ -1,7 +1,9 @@
 import {Component, signal} from '@angular/core';
-import {HeaderComponent} from './header.component';
-import {SidenavComponent} from './sidenav.component';
+import {HeaderComponent} from '../header.component';
+import {SidenavComponent} from '../sidenav.component';
 import {RouterOutlet} from '@angular/router';
+import {MatIcon} from '@angular/material/icon';
+import {MatIconButton} from '@angular/material/button';
 
 @Component(
   {
@@ -9,16 +11,19 @@ import {RouterOutlet} from '@angular/router';
     imports: [
       HeaderComponent,
       SidenavComponent,
-      RouterOutlet
+      RouterOutlet,
+      MatIcon,
+      MatIconButton
     ],
     template: `
-      <div>
-        <app-header (toggleSidenav)="toggle()"/>
+      <app-header>
+        <button mat-icon-button (click)="toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </app-header>
         <app-sidenav [toggleDrawer]="toggleSidenav()">
           <router-outlet></router-outlet>
         </app-sidenav>
-<!--        <app-footer class="d-flex justify-content-center"/>-->
-      </div>
     `
   }
 )

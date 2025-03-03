@@ -46,7 +46,6 @@ export class AuthService {
       firstName: firstName,
       lastName: lastName,
       role: role,
-      token: token
     }
 
   }
@@ -69,6 +68,7 @@ export class AuthService {
   logout() {
     this._user.set(undefined);
     localStorage.removeItem('token');
+    location.reload();
   }
 
   getAuthToken() {

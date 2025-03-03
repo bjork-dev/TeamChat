@@ -1,19 +1,21 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using TeamChat.Server.Application.Auth.Interface;
 using TeamChat.Server.Application.Auth.Dto;
 using TeamChat.Server.Domain;
+using TeamChat.Server.Infrastructure.Auth;
+using TeamChat.Server.Infrastructure.Teams;
 
 using BC = BCrypt.Net.BCrypt;
-using TeamChat.Server.Application.Users;
 
 namespace TeamChat.Server.Application.Auth;
-public class AuthService(ITokenService tokenService, IUserRepository repo) : IAuthService
+public class AuthService(ITokenService tokenService, ITeamChatDb db) : IAuthService
 {
     public async Task<Either<Error, int>> RegisterUser(RegisterUserDto dto)
     {
-        var userExists = await repo.Exists(dto.UserName);
+        var userExists = await db.User.AnyAsync(x => x.Username == dto.UserName);
 
         if (userExists)
         {
@@ -29,14 +31,14 @@ public class AuthService(ITokenService tokenService, IUserRepository repo) : IAu
             hash,
             dto.Role);
 
-        repo.Add(newUser);
-        await repo.SaveChangesAsync();
+        db.User.Add(newUser);
+        await db.SaveChangesAsync();
 
         return newUser.Id;
     }
     public async Task<Either<Error, UserTokenDto>> LoginUser(LoginUserDto dto)
     {
-        var user = await repo.Get(dto.Username);
+        var user = await db.User.FirstOrDefaultAsync(x => x.Username == dto.Username);
 
         if (user is null || !BC.EnhancedVerify(dto.Password, user.Password))
         {

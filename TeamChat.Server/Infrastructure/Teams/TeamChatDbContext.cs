@@ -4,9 +4,9 @@ using System.Reflection;
 using TeamChat.Server.Domain;
 using TeamChat.Server.Domain.Base;
 
-namespace TeamChat.Server.Infrastructure;
+namespace TeamChat.Server.Infrastructure.Teams;
 
-public sealed class TeamChatDbContext(DbContextOptions<TeamChatDbContext> options, IMediator mediator) : DbContext(options)
+public sealed class TeamChatDbContext(DbContextOptions<TeamChatDbContext> options, IMediator mediator) : DbContext(options), ITeamChatDb
 {
     public DbSet<Team> Team => Set<Team>();
     public DbSet<Group> Group => Set<Group>();

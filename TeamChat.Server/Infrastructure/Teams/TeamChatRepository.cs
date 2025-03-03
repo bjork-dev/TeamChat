@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TeamChat.Server.Application.Teams;
+using TeamChat.Server.Application.Teams.Dto;
 
-namespace TeamChat.Server.Infrastructure;
+namespace TeamChat.Server.Infrastructure.Teams;
 
 public static class TeamChatRepository
 {
-    public static Task<TeamDto[]> GetTeamsForUser(this TeamChatDbContext db, int userId)
+    public static Task<TeamDto[]> GetTeamsForUser(this ITeamChatDb db, int userId)
         => db.Team
             .AsNoTracking()
             .Include(t => t.Users)
@@ -16,7 +16,7 @@ public static class TeamChatRepository
             .ToArrayAsync();
 
 
-    public static Task<GroupDetailsDto?> GetGroup(this TeamChatDbContext db, int id)
+    public static Task<GroupDetailsDto?> GetGroup(this ITeamChatDb db, int id)
         => db.Group
             .AsNoTracking()
             .Include(x => x.Messages)
@@ -29,5 +29,6 @@ public static class TeamChatRepository
                     .Select(m => new MessageDto(m.Id, m.User.Id, m.User.FirstName, m.User.LastName, m.Text, m.CreatedAt))
                     .ToArray()))
             .FirstOrDefaultAsync();
+
 
 }

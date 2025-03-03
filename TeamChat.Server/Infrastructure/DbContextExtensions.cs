@@ -1,4 +1,5 @@
 ﻿using TeamChat.Server.Domain;
+using TeamChat.Server.Infrastructure.Teams;
 
 namespace TeamChat.Server.Infrastructure;
 

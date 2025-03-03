@@ -1,6 +1,7 @@
-import {Component, signal} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
+import {ThemePickerService} from './theme-picker.service';
 
 @Component(
   {
@@ -20,31 +21,11 @@ import {MatIcon} from '@angular/material/icon';
 )
 export class ThemePickerComponent {
 
-  isDarkMode = signal(false)
-
-  constructor() {
-    this.setTheme();
-  }
+  themePickerService = inject(ThemePickerService)
+  isDarkMode = this.themePickerService.isDarkMode
 
   toggleTheme() {
-    const isDarkMode = localStorage.getItem('dark') === 'true';
-    localStorage.setItem('dark', isDarkMode ? 'false' : 'true');
-    this.setTheme();
+    this.themePickerService.toggleTheme()
   }
 
-  setTheme() {
-    const isDarkMode = localStorage.getItem('dark') === 'true';
-    const body = document.getElementsByTagName('body')[0];
-    if (isDarkMode) {
-      body.classList.remove('light-mode');
-      body.classList.add('dark-mode');
-      localStorage.setItem('dark', 'true');
-      this.isDarkMode.set(true);
-    } else {
-      body.classList.remove('dark-mode');
-      body.classList.add('light-mode');
-      localStorage.setItem('dark', 'false');
-      this.isDarkMode.set(false);
-    }
-  }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using TeamChat.Server.Application.Auth.Interface;
 
-namespace TeamChat.Server.Infrastructure;
+namespace TeamChat.Server.Infrastructure.Auth;
 
 public sealed class TokenService(IConfiguration configuration) : ITokenService
 {
@@ -40,6 +40,8 @@ public sealed class TokenService(IConfiguration configuration) : ITokenService
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
+            ValidAudience = "TeamChatClient",
+            ValidIssuer = "TeamChatServer",
             ValidateAudience = true,
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
@@ -49,12 +51,29 @@ public sealed class TokenService(IConfiguration configuration) : ITokenService
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+        ClaimsPrincipal principal;
+        try
+        {
+            principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
-        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+        }
+        catch
+        {
             throw new SecurityTokenException("Invalid token");
+        }
 
         return principal;
     }
+}
+
+public interface ITokenService
+{
+    string GenerateAccessToken(Claim[] claims);
+    string GenerateRefreshToken();
+    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 }
 

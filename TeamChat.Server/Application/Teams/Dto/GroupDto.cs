@@ -1,4 +1,4 @@
-﻿namespace TeamChat.Server.Application.Teams;
+﻿namespace TeamChat.Server.Application.Teams.Dto;
 
 public sealed record GroupDto(int Id, string Name);
 public sealed record GroupDetailsDto(int Id, string Name, MessageDto[] Messages);

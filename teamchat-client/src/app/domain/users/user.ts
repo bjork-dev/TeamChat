@@ -1,5 +1,3 @@
-import {UserRole} from './user-role';
-
 export interface User  {
   id: number;
   username: string;
@@ -7,6 +5,8 @@ export interface User  {
   firstName: string;
   lastName: string;
   role: string;
-  token: string;
 }
+
+
+export const isAdmin = (user: User) => user.role === 'Admin';
 

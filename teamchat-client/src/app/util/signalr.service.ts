@@ -2,7 +2,7 @@ import {inject, Injectable, OnDestroy, signal} from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import {HubConnection, HubConnectionState} from '@microsoft/signalr';
 import {Notyf} from 'notyf';
-import {filter, Subject} from 'rxjs';
+import {filter, firstValueFrom, Subject} from 'rxjs';
 import {AuthService} from '../components/auth/auth.service';
 import {environment} from '../../../environment';
 
@@ -46,15 +46,30 @@ export class SignalrService implements OnDestroy {
   }
 
   async joinGroup(groupId: string) {
+    if (this._connection?.state !== HubConnectionState.Connected) {
+      // wait for connection to be established
+      await firstValueFrom(this.hubConnectionState)
+    }
     await this._connection?.invoke('JoinGroup', groupId);
   }
 
-  addListener<T>(eventName: string, callback: (data: T) => void) {
+  async addListener<T>(eventName: string, callback: (data: T) => void) {
+    if (this._connection?.state !== HubConnectionState.Connected) {
+      // wait for connection to be established
+      await firstValueFrom(this.hubConnectionState)
+    }
     this._connection?.on(eventName, callback);
   }
 
   ngOnDestroy(): void {
     console.log('Connection stopped');
     this._connection?.stop()
+  }
+
+  leaveGroup(number: number) {
+    // TODO: Leave group
+    // this._connection?.invoke('LeaveGroup', number);
+
+    this._connection?.off('messageReceived');
   }
 }

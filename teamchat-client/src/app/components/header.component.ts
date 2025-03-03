@@ -2,7 +2,7 @@ import {Component, output} from '@angular/core';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {UserComponent} from './user.component';
+import {UserComponent} from './users/user.component';
 import {ThemePickerComponent} from './theme-picker/theme-picker.component';
 
 @Component(
@@ -24,9 +24,7 @@ import {ThemePickerComponent} from './theme-picker/theme-picker.component';
     ],
     template: `
       <mat-toolbar>
-        <button mat-icon-button (click)="toggleSidenav.emit()">
-          <mat-icon>menu</mat-icon>
-        </button>
+        <ng-content/>
         <h1>TeamChat</h1>
         <span class="spacer"></span>
         <app-theme-picker/>

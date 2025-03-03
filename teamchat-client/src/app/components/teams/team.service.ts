@@ -13,7 +13,7 @@ export class TeamService {
 
   getTeams(): Observable<Team[]> {
     if (!this.userId) return of(([]));
-    return this.http.get<Team[]>(`/api/teams/user/${this.userId}`);
+    return this.http.get<Team[]>(`/api/teams/user`);
   }
 
   getGroupDetails(groupId: number) {

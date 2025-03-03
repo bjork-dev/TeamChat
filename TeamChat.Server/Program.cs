@@ -54,7 +54,7 @@ builder.Services.AddRateLimiter(options =>
             httpContext.Connection.RemoteIpAddress?.ToString() ?? throw new NullReferenceException("Missing RemoteIpAddress"),
             _ => new TokenBucketRateLimiterOptions
             {
-                TokenLimit = 10, // Maximum tokens a client can accumulate
+                TokenLimit = 20, // Maximum tokens a client can accumulate
                 ReplenishmentPeriod = TimeSpan.FromSeconds(5), // Replenishment interval
                 TokensPerPeriod = 2, // Number of tokens added per interval
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,

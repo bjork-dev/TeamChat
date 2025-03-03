@@ -1,15 +1,13 @@
-using System.Text;
-using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Threading.RateLimiting;
 using TeamChat.Server.Application;
 using TeamChat.Server.Application.Auth;
 using TeamChat.Server.Application.Auth.Interface;
 using TeamChat.Server.Application.Teams;
 using TeamChat.Server.Application.Users;
-using TeamChat.Server.Domain;
 using TeamChat.Server.Infrastructure;
 using TeamChat.Server.Infrastructure.Repositories;
 
@@ -33,6 +31,7 @@ builder.Services.AddDbContext<TeamChatDbContext>(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -124,7 +123,7 @@ if (app.Environment.IsDevelopment())
 
     using var scope = app.Services.CreateScope();
     using var dbContext = scope.ServiceProvider.GetRequiredService<TeamChatDbContext>();
-    dbContext.Database.EnsureCreated();
+
     dbContext.Database.Migrate();
 
     dbContext.Seed();

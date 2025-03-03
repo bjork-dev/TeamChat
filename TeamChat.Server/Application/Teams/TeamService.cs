@@ -1,13 +1,14 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using TeamChat.Server.Domain;
 using TeamChat.Server.Infrastructure;
 using TeamChat.Server.Infrastructure.Repositories;
 
 namespace TeamChat.Server.Application.Teams;
 
-public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbContext) : ITeamService
+public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbContext, IMemoryCache cache) : ITeamService
 {
     public async Task<TeamDto[]> GetAsync()
     {
@@ -20,11 +21,20 @@ public class TeamService(ITeamRepository teamRepository, TeamChatDbContext dbCon
 
     public async Task<TeamDto[]> GetUserTeams(int userId)
     {
-        return (await teamRepository.GetTeamsForUser(userId))
+        if (cache.TryGetValue($"{userId}-teams", out TeamDto[]? cachedTeams) != false && cachedTeams != null)
+        {
+            return cachedTeams;
+        }
+
+        var teams = (await teamRepository.GetTeamsForUser(userId))
             .Map(t => new TeamDto(t.Id, t.Name, t.Description, t.Groups
                 .Map(g => new GroupDto(g.Id, g.Name))
                 .ToArray()))
             .ToArray();
+
+        cache.Set($"{userId}-teams", teams, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
+
+        return teams;
     }
 
     public async Task<Either<Error, TeamDto>> GetAsync(int id)

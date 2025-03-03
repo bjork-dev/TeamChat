@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -110,8 +111,28 @@ if (builder.Environment.IsDevelopment())
     });
 }
 
+
 if (builder.Environment.IsProduction())
 {
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.MimeTypes = ["text/plain", "text/css", "application/javascript", "text/html", "application/json", "image/svg+xml"];
+        options.Providers.Add<BrotliCompressionProvider>();
+        options.Providers.Add<GzipCompressionProvider>();
+    });
+
+    builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+    {
+        options.Level = System.IO.Compression.CompressionLevel.Fastest; 
+    });
+
+    builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+    {
+        options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+    });
+
+    builder.Services.AddResponseCaching();
     builder.Services.AddSpaStaticFiles(c => c.RootPath = "wwwroot");
 }
 
@@ -146,8 +167,34 @@ app.MapTeamEndpoints();
 
 app.MapHub<TeamChatHub>("/hub");
 
+
 if (app.Environment.IsProduction())
 {
+    app.UseResponseCaching();
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        OnPrepareResponse = ctx =>
+        {
+            var path = ctx.File.Name.ToLower();
+
+            // Cache static assets (JS, CSS, images) for a long time
+            if (path.EndsWith(".js") || path.EndsWith(".css") || path.EndsWith(".png") ||
+                path.EndsWith(".jpg") || path.EndsWith(".jpeg") || path.EndsWith(".svg") ||
+                path.EndsWith(".woff") || path.EndsWith(".woff2") || path.EndsWith(".ttf"))
+            {
+                ctx.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+            }
+            // index.html is always fetched fresh, in case the SPA has been updated
+            else if (path == "index.html")
+            {
+                ctx.Context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+                ctx.Context.Response.Headers.Pragma = "no-cache";
+                ctx.Context.Response.Headers.Expires = "0";
+            }
+        }
+    });
+
     app.UseSpaStaticFiles();
     app.UseSpa(s => s.Options.SourcePath = "wwwroot");
 }

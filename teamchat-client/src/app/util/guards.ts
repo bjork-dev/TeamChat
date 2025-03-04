@@ -20,7 +20,7 @@ export const adminGuard: CanActivateFn = async () => {
   const router = inject(Router);
 
   if (!user || !isAdmin(user)) {
-    await router.navigate(['/']);
+    await router.navigate(['/login']);
     return false;
   }
 

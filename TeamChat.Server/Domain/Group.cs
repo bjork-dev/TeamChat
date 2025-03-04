@@ -13,8 +13,7 @@ public class Group : BaseEntity
         Name = name;
     }
 
-
-    public void AddMessage(Message message)
+    internal void AddMessage(Message message)
     {
         Messages.Add(message);
 

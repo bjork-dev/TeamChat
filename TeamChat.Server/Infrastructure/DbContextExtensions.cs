@@ -24,6 +24,10 @@ public static class DbContextExtensions
             var user = new User("liam", "Liam", "Björkman", "liam.bjorkman@teamchat.com", hash, UserRole.Admin);
             dbContext.User.Add(user);
             dbContext.SaveChanges();
+
+            var team = dbContext.Team.First();
+            team.AddUser(user);
+            dbContext.SaveChanges();
         }
     }
 }

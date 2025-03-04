@@ -8,9 +8,6 @@ import {MatIconButton} from '@angular/material/button';
   selector: 'app-root',
   imports: [
     RouterOutlet,
-    HeaderComponent,
-    MatIcon,
-    MatIconButton
   ],
   template: `
     <router-outlet></router-outlet>

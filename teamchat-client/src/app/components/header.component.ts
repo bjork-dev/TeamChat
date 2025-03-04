@@ -10,8 +10,6 @@ import {ThemePickerComponent} from './theme-picker/theme-picker.component';
     selector: 'app-header',
     imports: [
       MatToolbar,
-      MatIconButton,
-      MatIcon,
       UserComponent,
       ThemePickerComponent
     ],

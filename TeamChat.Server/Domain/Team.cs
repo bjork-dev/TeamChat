@@ -1,6 +1,4 @@
-﻿using LanguageExt;
-using LanguageExt.Common;
-using TeamChat.Server.Domain.Base;
+﻿using TeamChat.Server.Domain.Base;
 
 namespace TeamChat.Server.Domain;
 
@@ -29,24 +27,15 @@ public class Team : BaseEntity, IAggregateRoot
         Groups.Remove(group);
     }
 
-    public Option<Error> Update(string newName, string newDescription)
+    public void AddUser(User user)
     {
-        if (string.IsNullOrEmpty(newName))
-        {
-            return Error.New("Team name cannot be empty.");
-        }
-
-        if (string.IsNullOrEmpty(newDescription))
-        {
-            return Error.New("Team description cannot be empty.");
-        }
-
-        Name = newName;
-        Description = newDescription;
-
-        return Option<Error>.None;
+        Users.Add(user);
     }
 
+    public void RemoveUser(User user)
+    {
+        Users.Remove(user);
+    }
     public void AddMessage(Message message, Group group)
     {
         var groupInTeam = Groups.FirstOrDefault(g => g.Id == group.Id);
@@ -59,7 +48,7 @@ public class Team : BaseEntity, IAggregateRoot
         {
             throw new InvalidOperationException("Author does not belong to this team.");
         }
-        
+
         groupInTeam.AddMessage(message);
     }
 }

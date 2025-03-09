@@ -4,9 +4,9 @@ namespace TeamChat.Server.Domain;
 
 public class Message : BaseEntity
 {
-    public User User { get; set; } = null!;
-    public string Text { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
+    public User User { get; private set; } = null!;
+    public string Text { get; private set; } = null!;
+    public DateTime CreatedAt { get; private set; }
     private Message() { } // Required by EF Core
     public Message(User user, string text) : this()
     {

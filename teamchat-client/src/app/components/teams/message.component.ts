@@ -13,9 +13,17 @@ import {DatePipe, NgClass} from '@angular/common';
       NgClass,
       DatePipe
     ],
+    styles: [
+      `
+        .message {
+          max-width: 50%;
+          overflow-wrap: break-word;
+        }
+      `
+    ],
     template: `
-      <div class="d-flex" [ngClass]="{'justify-content-end': isUserMessage()}">
-        <mat-card appearance="outlined">
+      <div class="d-flex flex-wrap" [ngClass]="{'justify-content-end': isUserMessage()}">
+        <mat-card appearance="outlined" class="message">
           <mat-card-header>
             <div class="d-flex justify-content-between w-100 gap-4">
               <div>
